@@ -1,5 +1,7 @@
-# README #
+## Fork ##
+This is a fork of the HLAPI (version 2018.1) that supports the MLAPI.Relay. To use it, simply replace the current networking dll with this one. Then enable the relay by using RelayTransport.UseRelay = true; and set the relayAddress and relayPort fields in the RelayTransport class. Everything else should work as usual.
 
+# README #
 The Unity Networking extension DLL is the open source component of the Unity Multiplayer Networking system. In this DLL we have the whole networking system except the NetworkTransport related APIs and classes. This is all the high level classes and components which make up the user friendly system of creating multiplayer games. This document details how you can compile your own version of the Networking extension DLL and use that in your games and applications.
 
 ### What license is the Networking extension DLL shipped under? ###
