@@ -36,6 +36,8 @@ namespace UnityEngine.Networking
         public byte[] messageBuffer { get { return m_MsgBuffer; }}
         public NetworkReader messageReader { get { return m_MsgReader; }}
 
+        public bool m_UseRelay;
+
         public Type networkConnectionClass
         {
             get { return m_NetworkConnectionClass; }
@@ -92,11 +94,11 @@ namespace UnityEngine.Networking
 
             if (m_UseWebSockets)
             {
-                m_ServerHostId = NetworkTransport.AddWebsocketHost(m_HostTopology, serverListenPort, ipAddress);
+                m_ServerHostId = m_UseRelay ? RelayTransport.AddWebsocketHost(m_HostTopology, serverListenPort, ipAddress, true, RelayTransport.RelayAddress, RelayTransport.RelayPort) : NetworkTransport.AddWebsocketHost(m_HostTopology, serverListenPort, ipAddress); 
             }
             else
             {
-                m_ServerHostId = NetworkTransport.AddHost(m_HostTopology, serverListenPort, ipAddress);
+                m_ServerHostId = m_UseRelay ? RelayTransport.AddHost(m_HostTopology, serverListenPort, ipAddress, true, RelayTransport.RelayAddress, RelayTransport.RelayPort) : NetworkTransport.AddHost(m_HostTopology, serverListenPort, ipAddress);
             }
 
             if (m_ServerHostId == -1)
@@ -121,11 +123,11 @@ namespace UnityEngine.Networking
 
             if (m_UseWebSockets)
             {
-                m_ServerHostId = NetworkTransport.AddWebsocketHost(m_HostTopology, serverListenPort);
+                m_ServerHostId = m_UseRelay ? RelayTransport.AddWebsocketHost(m_HostTopology, serverListenPort, true, RelayTransport.RelayAddress, RelayTransport.RelayPort) : NetworkTransport.AddWebsocketHost(m_HostTopology, serverListenPort);
             }
             else
             {
-                m_ServerHostId = NetworkTransport.AddHost(m_HostTopology, serverListenPort);
+                m_ServerHostId = m_UseRelay ? RelayTransport.AddWebsocketHost(m_HostTopology, serverListenPort, true, RelayTransport.RelayAddress, RelayTransport.RelayPort) : NetworkTransport.AddHost(m_HostTopology, serverListenPort);
             }
 
             if (m_ServerHostId == -1)
@@ -228,7 +230,7 @@ namespace UnityEngine.Networking
 
             do
             {
-                networkEvent = NetworkTransport.ReceiveFromHost(m_ServerHostId, out connectionId, out channelId, m_MsgBuffer, (int)m_MsgBuffer.Length, out receivedSize, out error);
+                networkEvent = m_UseRelay ? RelayTransport.ReceiveFromHost(m_ServerHostId, out connectionId, out channelId, m_MsgBuffer, (ushort)m_MsgBuffer.Length, out receivedSize, out error) : NetworkTransport.ReceiveFromHost(m_ServerHostId, out connectionId, out channelId, m_MsgBuffer, (int)m_MsgBuffer.Length, out receivedSize, out error);
                 if (networkEvent != NetworkEventType.Nothing)
                 {
                     if (LogFilter.logDev) { Debug.Log("Server event: host=" + m_ServerHostId + " event=" + networkEvent + " error=" + error); }

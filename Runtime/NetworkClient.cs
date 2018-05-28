@@ -45,6 +45,7 @@ namespace UnityEngine.Networking
 
         byte[] m_MsgBuffer;
         NetworkReader m_MsgReader;
+        public bool m_UseRelay;
 
         protected enum ConnectState
         {
@@ -170,7 +171,7 @@ namespace UnityEngine.Networking
 
             m_Connection.Disconnect();
             m_Connection = null;
-            m_ClientId = NetworkTransport.AddHost(m_HostTopology, m_HostPort);
+            m_ClientId = m_UseRelay ? RelayTransport.AddHost(m_HostTopology, m_HostPort, false, RelayTransport.RelayAddress, RelayTransport.RelayPort) : NetworkTransport.AddHost(m_HostTopology, m_HostPort);
 
             string hostnameOrIp = serverIp;
             m_ServerPort = serverPort;
@@ -223,7 +224,7 @@ namespace UnityEngine.Networking
 
             m_Connection.Disconnect();
             m_Connection = null;
-            m_ClientId = NetworkTransport.AddHost(m_HostTopology, m_HostPort);
+            m_ClientId = m_UseRelay ? RelayTransport.AddHost(m_HostTopology, m_HostPort, false, RelayTransport.RelayAddress, RelayTransport.RelayPort) : NetworkTransport.AddHost(m_HostTopology, m_HostPort);
 
             if (secureTunnelEndPoint == null)
             {
@@ -262,7 +263,7 @@ namespace UnityEngine.Networking
 
             try
             {
-                m_ClientConnectionId = NetworkTransport.ConnectEndPoint(m_ClientId, m_RemoteEndPoint, 0, out error);
+                m_ClientConnectionId = m_UseRelay ? RelayTransport.ConnectEndPoint(m_ClientId, m_RemoteEndPoint, RelayTransport.RelayAddress, RelayTransport.RelayPort, 0, out error) : NetworkTransport.ConnectEndPoint(m_ClientId, m_RemoteEndPoint, 0, out error);
             }
             catch (Exception ex)
             {
@@ -389,7 +390,7 @@ namespace UnityEngine.Networking
 
             try
             {
-                m_ClientConnectionId = NetworkTransport.ConnectEndPoint(m_ClientId, m_RemoteEndPoint, 0, out error);
+                m_ClientConnectionId = m_UseRelay ? RelayTransport.ConnectEndPoint(m_ClientId, m_RemoteEndPoint, RelayTransport.RelayAddress, RelayTransport.RelayPort, 0, out error) : NetworkTransport.ConnectEndPoint(m_ClientId, m_RemoteEndPoint, 0, out error);
             }
             catch (Exception ex)
             {
@@ -438,11 +439,11 @@ namespace UnityEngine.Networking
                 int maxTimeout = m_SimulatedLatency * 3;
 
                 if (LogFilter.logDebug) { Debug.Log("AddHost Using Simulator " + minTimeout + "/" + maxTimeout); }
-                m_ClientId = NetworkTransport.AddHostWithSimulator(m_HostTopology, minTimeout, maxTimeout, m_HostPort);
+                m_ClientId = m_UseRelay ? RelayTransport.AddHostWithSimulator(m_HostTopology, minTimeout, maxTimeout, m_HostPort, false, RelayTransport.RelayAddress, RelayTransport.RelayPort) : NetworkTransport.AddHostWithSimulator(m_HostTopology, minTimeout, maxTimeout, m_HostPort);
             }
             else
             {
-                m_ClientId = NetworkTransport.AddHost(m_HostTopology, m_HostPort);
+                m_ClientId = m_UseRelay ? RelayTransport.AddHost(m_HostTopology, m_HostPort, false, RelayTransport.RelayAddress, RelayTransport.RelayPort) :  NetworkTransport.AddHost(m_HostTopology, m_HostPort);
             }
         }
 
@@ -494,11 +495,11 @@ namespace UnityEngine.Networking
                         m_SimulatedLatency,
                         m_PacketLoss);
 
-                m_ClientConnectionId = NetworkTransport.ConnectWithSimulator(m_ClientId, m_ServerIp, m_ServerPort, 0, out error, simConfig);
+                m_ClientConnectionId = m_UseRelay ? RelayTransport.ConnectWithSimulator(m_ClientId, m_ServerIp, m_ServerPort, RelayTransport.RelayAddress, RelayTransport.RelayPort, 0, out error, simConfig) : NetworkTransport.ConnectWithSimulator(m_ClientId, m_ServerIp, m_ServerPort, 0, out error, simConfig);
             }
             else
             {
-                m_ClientConnectionId = NetworkTransport.Connect(m_ClientId, m_ServerIp, m_ServerPort, 0, out error);
+                m_ClientConnectionId = m_UseRelay ? RelayTransport.Connect(m_ClientId, m_ServerIp, m_ServerPort, RelayTransport.RelayAddress, RelayTransport.RelayPort, 0, out error) : NetworkTransport.Connect(m_ClientId, m_ServerIp, m_ServerPort, 0, out error);
             }
 
             m_Connection = (NetworkConnection)Activator.CreateInstance(m_NetworkConnectionClass);
@@ -712,7 +713,7 @@ namespace UnityEngine.Networking
                 int receivedSize;
                 byte error;
 
-                networkEvent = NetworkTransport.ReceiveFromHost(m_ClientId, out connectionId, out channelId, m_MsgBuffer, (ushort)m_MsgBuffer.Length, out receivedSize, out error);
+                networkEvent = m_UseRelay ? RelayTransport.ReceiveFromHost(m_ClientId, out connectionId, out channelId, m_MsgBuffer, (ushort)m_MsgBuffer.Length, out receivedSize, out error) : NetworkTransport.ReceiveFromHost(m_ClientId, out connectionId, out channelId, m_MsgBuffer, (ushort)m_MsgBuffer.Length, out receivedSize, out error);
                 if (m_Connection != null) m_Connection.lastError = (NetworkError)error;
 
                 if (networkEvent != NetworkEventType.Nothing)

@@ -81,6 +81,7 @@
     <Compile Include="..\Runtime\NetworkWriter.cs" />
     <Compile Include="..\Runtime\NetworkMigrationManager.cs" />
     <Compile Include="..\Runtime\NetworkServerSimple.cs" />
+    <Compile Include="RelayTransport.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Target Name="AfterBuild">
