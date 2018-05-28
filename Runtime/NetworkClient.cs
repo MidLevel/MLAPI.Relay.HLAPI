@@ -45,7 +45,7 @@ namespace UnityEngine.Networking
 
         byte[] m_MsgBuffer;
         NetworkReader m_MsgReader;
-        public bool m_UseRelay;
+        internal bool m_UseRelay { get { return RelayTransport.UseRelay; } }
 
         protected enum ConnectState
         {

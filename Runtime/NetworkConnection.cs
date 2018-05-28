@@ -36,7 +36,7 @@ namespace UnityEngine.Networking
         public HashSet<NetworkInstanceId> clientOwnedObjects { get { return m_ClientOwnedObjects; } }
         public bool logNetworkMessages = false;
         public bool isConnected { get { return hostId != -1; }}
-        public bool isOnRelay;
+        internal bool m_UseRelay { get { return RelayTransport.UseRelay; } }
 
 
         public class PacketStat
@@ -181,7 +181,7 @@ namespace UnityEngine.Networking
                 return;
             }
             byte error;
-            if (isOnRelay) RelayTransport.Disconnect(hostId, connectionId, out error);
+            if (m_UseRelay) RelayTransport.Disconnect(hostId, connectionId, out error);
             else NetworkTransport.Disconnect(hostId, connectionId, out error);
 
             RemoveObservers();
@@ -584,7 +584,7 @@ namespace UnityEngine.Networking
 
         public virtual bool TransportSend(byte[] bytes, int numBytes, int channelId, out byte error)
         {
-            return isOnRelay ? RelayTransport.Send(hostId, connectionId, channelId, bytes, numBytes, out error) : NetworkTransport.Send(hostId, connectionId, channelId, bytes, numBytes, out error);
+            return m_UseRelay ? RelayTransport.Send(hostId, connectionId, channelId, bytes, numBytes, out error) : NetworkTransport.Send(hostId, connectionId, channelId, bytes, numBytes, out error);
         }
 
         internal void AddOwnedObject(NetworkIdentity obj)

@@ -1,3 +1,4 @@
+#if ENABLE_UNET
 using System;
 using System.Collections.Generic;
 using System.Net;
@@ -7,6 +8,7 @@ namespace UnityEngine.Networking
 {
     public static class RelayTransport
     {
+        public static bool UseRelay;
         public static string RelayAddress;
         public static ushort RelayPort;
 
@@ -330,3 +332,4 @@ namespace UnityEngine.Networking
         public InvalidConfigException(string issue) : base(issue) { }
     }
 }
+#endif

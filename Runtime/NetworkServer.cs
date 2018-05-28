@@ -56,7 +56,7 @@ namespace UnityEngine.Networking
 
         public static bool dontListen { get { return m_DontListen; } set { m_DontListen = value; } }
         public static bool useWebSockets { get { return instance.m_SimpleServerSimple.useWebSockets; } set { instance.m_SimpleServerSimple.useWebSockets = value; } }
-        public bool m_UseRelay;
+        internal bool m_UseRelay { get { return RelayTransport.UseRelay; } }
 
         internal static NetworkServer instance
         {
